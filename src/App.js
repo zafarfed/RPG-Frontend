@@ -1,9 +1,8 @@
 import './App.scss';
 import Main from './Components/Main/Main'
-import Users from './Components/Users/Users'
 import {Routes, Route} from 'react-router'
-import UsersId from './Components/UsersId/UsersId';
-// import 'bootstrap/dist/css/bootstrap.css' 
+import PlayersId from './Components/PlayersId/PlayerId';
+import Players from './Components/Players/Players';
 
 function App() {
 
@@ -11,8 +10,8 @@ function App() {
     <div className='App'>
        <Routes>
          <Route path={'/'} exact element={<Main/>}/>
-         <Route path={'/users'} exact element={<Users/>}/>
-         <Route path={'/users/id'} exact element={<UsersId/>}/>
+         <Route path={'/players'} exact element={<Players/>}/>
+         <Route path={'/players/id'} exact element={<PlayersId/>}/>
        </Routes>
     </div>
   );

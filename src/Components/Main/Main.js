@@ -3,7 +3,8 @@ import {useState, useRef} from 'react'
 import {useNavigate} from "react-router"
 
 function Main(){
-    const [users, setUsers] = useState(JSON.parse(localStorage.getItem('users')) || [])    
+
+    const players = JSON.parse(localStorage.getItem('players')) || []
        
     const navigate= useNavigate()
 
@@ -15,50 +16,48 @@ function Main(){
         {type:'Evropean'},
     ]
 
-    const userFirstname = useRef()
-    const userLastname = useRef()
-    const userAge = useRef()
-    const userRace = useRef()
-    const userText = useRef()
-
+    const playerFirstname = useRef()
+    const playerLastname = useRef()
+    const playerAge = useRef()
+    const playerRace = useRef()
+    const playerText = useRef()
 
     const add= (event)=>{  
         event.preventDefault()
-        let newUser=[{
-            userFirstname : event.target[0].value,
-            userLastname : event.target[1].value,
-            userAge : event.target[2].value,
-            userRace : event.target[3].value,
-            userText : event.target[4].value
-        }]
+        let newPlayer={
+            playerFirstname : event.target[0].value,
+            playerLastname : event.target[1].value,
+            playerAge : event.target[2].value,
+            playerRace : event.target[3].value,
+            playerText : event.target[4].value
+        }
 
-        localStorage.setItem('users',JSON.stringify(newUser))
-        users.push(newUser)
-        setUsers([...users, newUser])    
-        navigate('/users')
+        players.push(newPlayer)
+        localStorage.setItem('players',JSON.stringify(players))
+        navigate('/players')
 
     }
 
     return(
+    
         <div className="main">
 
             <h1> Welcome !</h1>
             <form onSubmit={add} id={'add'}>
-                 <input type={'text'} ref={userFirstname} required placeholder={'Firstname'} />
-                 <input type={'text'} ref={userLastname} required placeholder={'Lastname'} />
-                 <input type={'number'} ref={userAge} required placeholder={'Age'} />
+                 <input type={'text'} ref={playerFirstname} required placeholder={'Firstname'} />
+                 <input type={'text'} ref={playerLastname} required placeholder={'Lastname'} />
+                 <input type={'number'} ref={playerAge} required placeholder={'Age'} />
 
-                 <select  ref={userRace}>
+                 <select  ref={playerRace}>
                      <option> Race</option>
                      {race.map((item,index)=><option key={index} defaultValue={item.type}>{item.type}</option>)}
                  </select>
 
-                 <textarea ref={userText} required placeholder="Text..." />
+                 <textarea ref={playerText} required placeholder="Text..." />
                  <br/>
                  <button type='submit' form='add'>Add</button>
             </form>
-            <Link to={'/users'}> Users </Link>
-
-        </div>
+            <Link to={'/players'}> Users </Link>
+    </div>
     )
 }export default Main;
