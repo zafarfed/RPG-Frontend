@@ -6,12 +6,14 @@ import Players from './Components/Players/Players';
 
 function App() {
 
+
+
   return (
     <div className='App'>
        <Routes>
-         <Route path={'/'} exact element={<Main/>}/>
-         <Route path={'/players'} exact element={<Players/>}/>
-         <Route path={'/players/id'} exact element={<PlayersId/>}/>
+         <Route path={'/'} exact={true} element={<Main/>}/>
+         <Route path={'/players'} exact={true} element={<Players/>}/>
+         <Route path={`/players/:id`} exact={true} element={<PlayersId/>}/>
        </Routes>
     </div>
   );

@@ -1,32 +1,27 @@
-import {useEffect,useState,useRef} from 'react'
-// import fs from "react-fs"
-// import path from "path"
+import {useEffect,useState} from 'react'
+import { useParams, Link } from 'react-router-dom'
+import axios from 'axios'
 
 function PlayersId(){
-    const playerFirstame = useRef()
-    const playerLastname = useRef()
-    const playerAge = useRef()
-    const playerRace = useRef()
-    const playerText = useRef()
+    const {id} = useParams()
 
-
-    const [players, setPlayers] = useState([])
+    const [playerInfo, setPlayerInfo] = useState([])
     const [disable, setDisable] = useState(true)
-    const [firstname, setFirstname] = useState(playerFirstame.current?.defaultValue)    
-    const [lastname, setLastname] = useState(playerLastname.current?.defaultValue)    
-    const [age, setAge] = useState(playerAge.current?.playerAge)    
-    const [raceType, setRaceType] = useState('')    
-    const [text, setText] = useState('') 
-    const [playerChanged, setPlayerChanged] = useState([]) 
+
+    const [update, setUpdate] = useState(true)
+
+    const [changePlayer, setChangePlayer] = useState({
+        id,
+    })
+ 
 
     useEffect(()=>{
-        let playersList = localStorage.getItem('players')
-
-    if (playersList) {
-        let playersArray = JSON.parse(playersList)
-        setPlayers(playersArray)   
-       }
-    },[])
+        const getOnePlayer = async ()=>{
+            const response = await axios.get(`http://localhost:4000/player/${id}`)
+            setPlayerInfo(response.data)
+        }
+        getOnePlayer()
+    },[update])
 
 
     const change=(event)=>{
@@ -34,23 +29,16 @@ function PlayersId(){
         setDisable(!disable)
     }
 
-    const save=(event)=>{
-        event.preventDefault()
-        let changedPlayer = [{
-            playerFirstname: firstname,
-            playerLastname: lastname,
-            playerAge: age,
-            playerRace: raceType,
-            playerText: text
-        }]
-        setDisable(!disable)
-        localStorage.setItem('players',JSON.stringify(changedPlayer))
-        setPlayerChanged([...playerChanged, ...changedPlayer])
-    
-        // fs.writeFile('data.json', JSON.stringify(changedPlayer), (err) => {
-        //     // When a request is aborted - the callback is called with an AbortError
-        //     console.log("yozilmadi");
-        // });
+    const save= async(e)=>{
+        try {
+            e.preventDefault()        
+            setDisable(!disable)
+            const response = await axios.put(`http://localhost:4000/player/${id}`, changePlayer)
+            setUpdate(!update)
+            alert(response.data);
+        } catch (error) {
+            console.log(error);
+        }
     }
    
 
@@ -63,18 +51,20 @@ function PlayersId(){
         }
         <br/>
         <br/>
-
-             {players.map((item, index)=>{return (
-              <form key={index} id={'formSub'} onSubmit={change || save}>
-                 <input type={'text'} ref={playerFirstame} disabled={disable} defaultValue={item.playerFirstname} onChange={(e)=>setFirstname(e.target.value)}/>
-                 <input type={'text'} ref={playerLastname} disabled={disable} defaultValue={item.playerLastname} onChange={(e)=>setLastname(e.target.value)}/>
-                 <input type={'number'} ref={playerAge} disabled={disable} defaultValue={item.playerAge} onChange={(e)=>setAge(e.target.value)}/>
-                 <select disabled={disable} ref={playerRace} onChange={(e)=>setRaceType(e.target.value)}>
-                     <option defaultValue={item.userRace}>{item.playerRace}</option>
+            { 
+                playerInfo?.length>0 &&
+              <form  id={'formSub'} onSubmit={change || save}>
+                 <input type={'text'} name='firstname' disabled={disable} defaultValue={playerInfo[0]?.firstname} onChange={(e)=>setChangePlayer({...changePlayer, firstname: e.target.value})}/>
+                 <input type={'text'} disabled={disable} defaultValue={playerInfo[0]?.lastname} onChange={(e)=>setChangePlayer({...changePlayer, lastname: e.target.value})}/>
+                 <input type={'number'} disabled={disable} defaultValue={playerInfo[0]?.age} onChange={(e)=>setChangePlayer({...changePlayer, age: e.target.value})}/>
+                 <select disabled={disable} onChange={(e)=>setChangePlayer({...changePlayer, race: e.target.value})}>
+                     <option defaultValue={playerInfo[0]?.race}>{playerInfo[0]?.race}</option>
                  </select>
-                 <textarea ref={playerText} disabled={disable} defaultValue={item.playerText} onChange={(e)=>setText(e.target.value)}/>
+                 <textarea disabled={disable} defaultValue={playerInfo[0]?.text} onChange={(e)=>setChangePlayer({...changePlayer, text: e.target.value})}/>
              </form>
-             ) })}  
+            }
+            <Link to={'/players'}> Users </Link>
+             
          </div>
     )
 }export default PlayersId;
